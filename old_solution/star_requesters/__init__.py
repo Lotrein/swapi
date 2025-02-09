@@ -13,4 +13,4 @@
 email: lotrein46@yamagl.ru
 """
 
-from .requesters import APIRequester, SQRequrester  # noqa: F401
+from .requesters import APIRequester, SWRequester  # noqa: F401

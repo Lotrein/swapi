@@ -1,12 +1,9 @@
-# Здесь не совсем понимаю, зачем нам импортировать APIRequester,
-# если мы его не используем.
-# Но pytest сругнулся на то, что я его не добавил, поэтому пришлось прописать
-from star_requesters import APIRequester, SQRequrester  # noqa: F401
+from star_requesters import SWRequester  # noqa: F401
 from pathlib import Path
 from datetime import datetime
 
 # Объявляем url с API сайта swapi.dev
-# url = 'https://swapi.dev/api'
+url = 'https://swapi.dev/api'
 
 
 def save_sw_data(url):
@@ -15,7 +12,7 @@ def save_sw_data(url):
        о категориях со swapi.dev в файлы"""
 
     # Создаём объект класса SWRequesters, передавая ему URL
-    sqrequester_object = SQRequrester(url)
+    sqrequester_object = SWRequester(url)
 
     # Получаем и сохраняем список категорий
     # с помощью метода get_sw_cetegories()
@@ -49,4 +46,4 @@ def save_sw_data(url):
 
 # Вызываем функцию для получения и сохранения информации
 # о категориях из swapi.dev в файловую систему
-save_sw_data('https://swapi.dev/api')
+save_sw_data(url)

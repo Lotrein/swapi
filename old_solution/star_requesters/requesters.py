@@ -7,12 +7,12 @@
 
 Перечень классов (с иерархией):
 1. APIRequester
-    1.1. SQRequrester
+    1.1. SWRequester
 
 Методы:
 1. APIRequester.get()
-2. SQRequrester.get_sw_categories()
-3. SQRequrester.get_sw_info()
+2. SWRequester.get_sw_categories()
+3. SWRequester.get_sw_info()
 """
 
 import requests  # type: ignore[import]
@@ -70,8 +70,8 @@ class APIRequester:
         return f'APIRequester: {self.base_url}'
 
 
-class SQRequrester(APIRequester):
-    """Класс SQRequester является дочерним по отношению к APIRequester
+class SWRequester(APIRequester):
+    """Класс SWRequester является дочерним по отношению к APIRequester
        и включает в себя:
        - Получение списка доступных категорий из swapi.dev/api
        - Получение содержимого конкретной категории"""
