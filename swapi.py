@@ -36,27 +36,27 @@ class APIRequester:
         else:
             raise WrongUrlDataType(base_url)
 
-    def get(self):
+    def get(self, base_url):
         """Метод get() получает ответ от указанного URL
            и перехватывает ошибки"""
 
         # Выполняем запрос к указанному URL, сохраняем в переменную response
         # Выполняем проверки на успешность запроса
         try:
-            response = requests.get(self.base_url + '/')
+            response = requests.get(base_url + '/')
             response.raise_for_status()
         except requests.HTTPError:
-            raise HttpError(self.base_url, response.status_code)
+            raise
         except requests.ConnectionError:
-            raise ConnectionError(self.base_url)
+            raise ConnectionError(base_url)
         except requests.exceptions.MissingSchema:
-            raise IncorrectUrlFormat(self.base_url)
+            raise IncorrectUrlFormat(base_url)
         except requests.RequestException:
-            raise UnknownError(self.base_url)
+            raise UnknownError(base_url)
 
         # На всякий случай переводим ответ в utf-8
         response.encoding = 'utf-8'
-        print(f'{datetime.now()}: Запрос к {self.base_url} выполнен.\n')
+        print(f'{datetime.now()}: Запрос к {base_url} выполнен.\n')
 
         return response
 
@@ -77,7 +77,7 @@ class SWRequester(APIRequester):
         из JSON-формата в словарь Python"""
 
         # Сохраняем response от указанного URL в categories
-        self.categories = self.get()
+        self.categories = self.get(self.base_url)
 
         # Выполняем проверки на возможность перевода JSON-объекта в словарь
         # Если невозможно, то программа прекращает выполнение
