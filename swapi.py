@@ -11,12 +11,12 @@ import requests  # type: ignore[import]
 
 Перечень классов (с иерархией):
 1. APIRequester
-    1.1. SQRequrester
+    1.1. SWRequester
 
 Методы:
 1. APIRequester.get()
-2. SQRequrester.get_sw_categories()
-3. SQRequrester.get_sw_info()
+2. SWRequester.get_sw_categories()
+3. SWRequester.get_sw_info()
 """
 
 
@@ -31,7 +31,7 @@ class APIRequester:
         # Проверяем тип данных переданного значения
         # Избавляемся от пробелов и "/" в конце и начале строки
         if isinstance(base_url, str):
-            self.base_url = str.strip(base_url, '/ ')
+            self.base_url = str.strip(base_url, ' ')
             print(f'{datetime.now()}: Инициализирован объект {self}\n')
         else:
             raise WrongUrlDataType(base_url)
@@ -64,14 +64,11 @@ class APIRequester:
         return f'APIRequester: {self.base_url}'
 
 
-class SQRequrester(APIRequester):
-    """Класс SQRequester является дочерним по отношению к APIRequester
+class SWRequester(APIRequester):
+    """Класс SWRequester является дочерним по отношению к APIRequester
        и включает в себя:
        - Получение списка доступных категорий из swapi.dev/api
        - Получение содержимого конкретной категории"""
-
-    def __init__(self, base_url):
-        super().__init__(base_url)
 
     def get_sw_categories(self):
         """Метод get_sw_categories возвращает перечень доступных категорий,
@@ -108,7 +105,7 @@ class SQRequrester(APIRequester):
            в выбранной категории (в строковом типе)."""
 
         # Составляем URL к первой странице текущей категории
-        category_url = self.base_url + '/' + sw_type + '/1/'
+        category_url = self.base_url + '/' + sw_type + '/'
 
         # Запрос к адресу элемента категории
         category_response = requests.get(category_url)
@@ -238,7 +235,7 @@ def save_sw_data(url):
        о категориях со swapi.dev в файлы"""
 
     # Создаём объект класса SWRequesters, передавая ему URL
-    sqrequester_object = SQRequrester(url)
+    sqrequester_object = SWRequester(url)
 
     # Получаем и сохраняем список категорий
     # с помощью метода get_sw_cetegories()
