@@ -31,7 +31,7 @@ class APIRequester:
         # Проверяем тип данных переданного значения
         # Избавляемся от пробелов и "/" в конце и начале строки
         if isinstance(base_url, str):
-            self.base_url = str.strip(base_url, ' ')
+            self.base_url = str.strip(base_url, '/ ')
             print(f'{datetime.now()}: Инициализирован объект {self}\n')
         else:
             raise WrongUrlDataType(base_url)
@@ -43,7 +43,10 @@ class APIRequester:
         # Выполняем запрос к указанному URL, сохраняем в переменную response
         # Выполняем проверки на успешность запроса
         try:
-            response = requests.get(base_url + '/')
+            print(
+                f'{datetime.now()}: Выполняется запрос страницы: '
+                f'{self.base_url + base_url}')
+            response = requests.get(self.base_url + base_url)
             response.raise_for_status()
         except requests.HTTPError:
             raise
@@ -56,12 +59,10 @@ class APIRequester:
 
         # На всякий случай переводим ответ в utf-8
         response.encoding = 'utf-8'
-        print(f'{datetime.now()}: Запрос к {base_url} выполнен.\n')
+        print(f'{datetime.now()}: Запрос к {self.base_url + base_url} '
+              f'выполнен.')
 
         return response
-
-    def __str__(self):
-        return f'APIRequester: {self.base_url}'
 
 
 class SWRequester(APIRequester):
@@ -76,8 +77,9 @@ class SWRequester(APIRequester):
         Также, перехватываются ошибки, связанные с преобразованием
         из JSON-формата в словарь Python"""
 
-        # Сохраняем response от указанного URL в categories
-        self.categories = self.get(self.base_url)
+        # Сохраняем response от указанного URL в categories,
+        # отправляя "хвост" - "/"
+        self.categories = self.get('/')
 
         # Выполняем проверки на возможность перевода JSON-объекта в словарь
         # Если невозможно, то программа прекращает выполнение
@@ -100,9 +102,6 @@ class SWRequester(APIRequester):
         # Получаем список категорий из словаря и сортируем в алфавитном порядке
         self.categories_keys = dict.keys(self.categories)
 
-        # Раньше categories_keys был list, сейчас такую сортировку не применить
-        # list.sort(self.categories_keys)
-
         print(
             f'{datetime.now()}: Сформирован перечень категорий:'
             f'\n{self.categories_keys}\n')
@@ -113,17 +112,11 @@ class SWRequester(APIRequester):
         """Метод get_sw_info возвращает данные с первой страницы
            в выбранной категории (в строковом типе)."""
 
-        # Составляем URL к первой странице текущей категории
-        category_url = self.base_url + '/' + sw_type + '/'
-
-        # Запрос к адресу элемента категории
-        category_response = requests.get(category_url)
+        # Запрос к адресу элемента категории (отправляем "хвост" в лице категории)
+        category_response = self.get(f'/{sw_type}/')
         print(f'{datetime.now()}: Получено содержимое категории {sw_type}')
 
         return category_response.text
-
-    def __str__(self):
-        return f'SQRequester: {self.base_url}'
 
 
 """
@@ -234,17 +227,13 @@ class MismathJSONFormat(requests.ConnectionError):
                 f'так как не соответствует формату.')
 
 
-# Объявляем url с API сайта swapi.dev
-url = 'https://swapi.dev/api'
-
-
-def save_sw_data(url):
+def save_sw_data():
     """Функция save_sw_data принимает на вход URL-адрес
        и с помощью пакета star_requests сохраняет информацию
        о категориях со swapi.dev в файлы"""
 
     # Создаём объект класса SWRequesters, передавая ему URL
-    sqrequester_object = SWRequester(url)
+    sqrequester_object = SWRequester('https://swapi.dev/api')
 
     # Получаем и сохраняем список категорий
     # с помощью метода get_sw_cetegories()
@@ -278,4 +267,4 @@ def save_sw_data(url):
 
 # Вызываем функцию для получения и сохранения информации
 # о категориях из swapi.dev в файловую систему
-save_sw_data(url)
+save_sw_data()
